@@ -1,0 +1,14 @@
+This project goal is to replicate the trading card game "Weiss Schwarz" into a digital game to be played between two players.
+
+Initial goal is to have all action to be done manually.
+Late goal to automate certain actions if possible.
+
+
+Currently the project functions are:
+- Host a game locally
+- Join a local game
+- Draw a hand of cards
+- Drag and drop cards
+
+WIP:
+Sorting the data from a website after obtaining the card info and creating a list of card objects with the sorted data
