@@ -5,13 +5,15 @@ using System.Linq;
 using System.Net;
 using System;
 using Newtonsoft.Json.Linq;
+using UnityEngine.Networking;
+using static System.Net.Mime.MediaTypeNames;
 
 public class GameManager : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        List<Card> myDeck = LoadDeckFromURL("https://www.encoredecks.com/api/deck/3MaHWilwW");
+        //List<Card> myDeck = LoadDeckFromURL("https://www.encoredecks.com/api/deck/3MaHWilwW");
         //List<Card> opponentDeck = LoadDeckFromURL("https://www.encoredecks.com/api/deck/Y1mRBaryO");
     }
 
@@ -20,7 +22,7 @@ public class GameManager : MonoBehaviour
     {
         
     }
-
+    
     public static List<Card> LoadDeckFromURL(string url)
     {
         string json = new WebClient().DownloadString(url);
@@ -43,6 +45,7 @@ public class GameManager : MonoBehaviour
         List<string> cardSID = new List<string>();
         List<string> cardType = new List<string>();
         List<string> cardColour = new List<string>();
+        List<string> imagePath = new List<string>();
 
         foreach (var item in results)
         {
@@ -60,19 +63,20 @@ public class GameManager : MonoBehaviour
             cardSID.Add(item["sid"].ToString());
             cardType.Add(item["cardtype"].ToString());
             cardColour.Add(item["colour"].ToString());
+            imagePath.Add(item["imagepath"].ToString());
         }
 
         List<Card> deck1 = new List<Card>();
 
         for (int i = 0; i < 50; i++)
         {
-            deck1.Add(new Card(cardAbilities[i], cardNames[i], cardRarity[i], cardSide[i], cardLevel[i], cardCost[i], cardPower[i], cardSoul[i], cardSet[i], cardRelease[i], cardSID[i], cardType[i], cardColour[i]));
-            //Debug.Log(deck1[i].Abilities);
+            deck1.Add(new Card(cardAbilities[i], cardNames[i], cardRarity[i], cardSide[i], cardLevel[i], cardCost[i], cardPower[i], cardSoul[i], cardSet[i], cardRelease[i], cardSID[i], cardType[i], cardColour[i], imagePath[i]));
+            //Debug.Log(deck1[i].ImagePath);
         }
 
         return deck1;
     }
-
+        
     public List<Card> LoadDecklist(string url)
     {
         string json = new WebClient().DownloadString(url);
@@ -95,7 +99,7 @@ public class GameManager : MonoBehaviour
         List<Card> deck1 = new List<Card>();
         foreach (var item in deckList)
         {
-            deck1.Add(new Card(item.Ability, item.Name, item.Rarity, item.Side, item.Level, item.Cost, item.Power, item.Soul, item.Set, item.Release, item.SID, item.CardType, item.Colour));
+            deck1.Add(new Card(item.Ability, item.Name, item.Rarity, item.Side, item.Level, item.Cost, item.Power, item.Soul, item.Set, item.Release, item.SID, item.CardType, item.Colour, item.ImagePath));
             //Console.WriteLine(item.Name + " " + item.Level + " " + item.Side + " " + item.Cost + " " + item.Power + " " + item.Rarity + " " + item.Soul + " " + item.Set + " " + item.SID + " " + item.Release + " " + item.CardType + " " + item.Colour);
         }
 
@@ -145,5 +149,24 @@ public class GameManager : MonoBehaviour
     {
         list2.AddRange(list1);
         list1.Clear();
+    }
+
+    IEnumerator DownloadImage(string MediaUrl)
+    {
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(MediaUrl);
+        yield return request.SendWebRequest();
+        if (request.isNetworkError || request.isHttpError)
+            Debug.Log(request.error);
+        else
+        {
+            Texture2D webTexture = ((DownloadHandlerTexture)request.downloadHandler).texture as Texture2D;
+            Sprite webSprite = SpriteFromTexture2D(webTexture);
+            //cardImage.GetComponent<Image>().sprite = webSprite;
+        }
+    }
+
+    Sprite SpriteFromTexture2D(Texture2D texture)
+    {
+        return Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
     }
 }

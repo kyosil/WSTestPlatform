@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 3397500914558061230}
   - component: {fileID: -4432461126225348305}
   - component: {fileID: -2128566107897685193}
+  - component: {fileID: 5982138255097856816}
   m_Layer: 8
   m_Name: Card2
   m_TagString: Untagged
@@ -275,3 +276,16 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
+--- !u!114 &5982138255097856816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131683989058811634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4464c0fbfca0ed4087687a69dde2572, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ImagePath: test2

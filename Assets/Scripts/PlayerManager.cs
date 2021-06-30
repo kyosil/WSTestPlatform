@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.UI;
 
 public class PlayerManager : NetworkBehaviour
 {
     public GameObject Card1;
     public GameObject Card2;
+    public GameObject CardBase;
     public GameObject MyHand;
     public GameObject OpponentHand;
     public GameObject DropZone;
+    
+    private Sprite sprt;
 
     List<GameObject> cards = new List<GameObject>();
+    List<Card> deck = GameManager.LoadDeckFromURL("https://www.encoredecks.com/api/deck/3MaHWilwW");
 
     public override void OnStartClient()
     {
@@ -25,8 +30,13 @@ public class PlayerManager : NetworkBehaviour
     [Server]
     public override void OnStartServer()
     {
-        cards.Add(Card1);
-        cards.Add(Card2);
+        foreach(var card in deck)
+        {
+            GameObject newCard = CardBase;
+            newCard.GetComponent<CardDescription>().Name = card.Name;
+            newCard.GetComponent<CardDescription>().ImagePath = card.ImagePath;
+            cards.Add(newCard);
+        }
     }
 
     [Command] //As a client, if you try to do any network related but asking from a client perspective. A command is used. e.g. change my number, update my position
@@ -35,9 +45,19 @@ public class PlayerManager : NetworkBehaviour
     {
         for (var i = 0; i < 5; i++)
         {
-            GameObject card = Instantiate(cards[Random.Range(0, cards.Count)], new Vector2(0, 0), Quaternion.identity);
+            Card newCard = deck[Random.Range(0, deck.Count)]; 
+            GameObject cardObject = CardBase;            
+            cardObject.GetComponent<CardDescription>().Name = newCard.Name;
+            cardObject.GetComponent<CardDescription>().ImagePath = newCard.ImagePath;
+
+            GameObject card = Instantiate(cardObject, new Vector2(0, 0), Quaternion.identity);
             NetworkServer.Spawn(card, connectionToClient); //the second part determines who has authority, in this case "connectionToClient" determines that the authority comes from the client itself
             RpcShowCard(card, "Dealt");
+            /*
+            GameObject card = Instantiate(cards[Random.Range(0, 50)], new Vector2(0, 0), Quaternion.identity);
+            Debug.Log(card.GetComponent<CardDescription>().ImagePath);
+            NetworkServer.Spawn(card, connectionToClient); //the second part determines who has authority, in this case "connectionToClient" determines that the authority comes from the client itself
+            RpcShowCard(card, "Dealt");*/
         }
     }
 
@@ -68,7 +88,7 @@ public class PlayerManager : NetworkBehaviour
         }
         else if (type == "Played")
         {
-            //card.transform.SetParent(DropZone.transform, false);
+            card.transform.SetParent(DropZone.transform, false);
         }
     }
 }

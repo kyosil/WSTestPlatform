@@ -17,8 +17,9 @@ public class Card : MonoBehaviour
     public string SID { get; set; }
     public string CardType { get; set; }
     public string Colour { get; set; }
+    public string ImagePath { get; set; }
 
-    public Card(string ability, string name, string rarity, string side, int level, int cost, int power, int soul, string set, string release, string sid, string cardType, string colour)
+    public Card(string ability, string name, string rarity, string side, int level, int cost, int power, int soul, string set, string release, string sid, string cardType, string colour, string imagePath)
     {
         Ability = ability;
         Name = name;
@@ -33,5 +34,6 @@ public class Card : MonoBehaviour
         SID = sid;
         CardType = cardType;
         Colour = colour;
+        ImagePath = imagePath;
     }
 }

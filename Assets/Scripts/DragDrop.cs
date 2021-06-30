@@ -17,11 +17,12 @@ public class DragDrop : NetworkBehaviour
     private Vector2 startPosition;
 
     private GameObject text;
+    Ray ray;
+    RaycastHit hit;
 
     private void Start()
     {
         Canvas = GameObject.Find("Main Canvas");
-        //DropZone = GameObject.Find("DropZone");
         text = GameObject.Find("Text");
         if (!hasAuthority)
         {
@@ -30,18 +31,35 @@ public class DragDrop : NetworkBehaviour
     }
     void Update()
     {
+        /*
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider != null)
+                {
+                    Debug.Log("Hello");
+                }
+            }
+        }*/
+
         if (isDragging)
         {
             transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
             transform.SetParent(Canvas.transform, true);
+            
         }
     }
 
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isOverDropZone = true;
         dropZone = collision.gameObject;
-        Debug.Log(dropZone.name);
+        //Debug.Log(dropZone.name);
         text.GetComponent<Text>().text = dropZone.name;
     }
 
@@ -58,6 +76,7 @@ public class DragDrop : NetworkBehaviour
         if (!isDraggable) return;
         startParent = transform.parent.gameObject;
         startPosition = transform.position;
+        gameObject.GetComponent<BoxCollider2D>().size = new Vector2(5,5);
         isDragging = true;
     }
 
@@ -68,7 +87,6 @@ public class DragDrop : NetworkBehaviour
         if (isOverDropZone)
         {
             transform.SetParent(dropZone.transform, false);
-            isDraggable = false;
             NetworkIdentity networkIdentity = NetworkClient.connection.identity;
             PlayerManager = networkIdentity.GetComponent<PlayerManager>();
             PlayerManager.PlayCard(gameObject);
@@ -78,5 +96,6 @@ public class DragDrop : NetworkBehaviour
             transform.position = startPosition;
             transform.SetParent(startParent.transform, false);
         }
+        gameObject.GetComponent<BoxCollider2D>().size = new Vector2(110, 180);
     }
 }
